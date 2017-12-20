@@ -49,11 +49,11 @@ function GitHub-Clone
     {
         do {
             $Account = Read-Host -Prompt 'Please enter the name of the GitHub Account.'
-            if ($Account == $Null) {
+            if ($Account -eq $Null) {
                 Write-Host 'No account name entered!'
             }
-        } while ($Account == $Null)
-        if ($Repos == $Null) {
+        } while ($Account -eq $Null)
+        if ($Repos -eq $Null) {
             [array]$Repos = @(
                 "chef_roles",
                 "chef_jenkins_configuration",
@@ -61,17 +61,50 @@ function GitHub-Clone
                 "chef_base_configuration",
                 "chef_plex_configuration",
                 "chef_media_configuration",
-                "chef_docker_configuration"
+                "chef_docker_configuration",
+                "bash_chefclient",
+                "docker_media_nzbget",
+                "docker_media_plexpy",
+                "docker_media_couchpotato",
+                "docker_media_sabnzbd",
+                "docker_media_sonarr",
+                "docker_media_plex",
+                "docker_admin_jenkins",
+                "conjur_admin_policy",
+                "powershell_github_clone",
+                "docker_network_unifi",
+                "powershell_iits",
+                "demo_conjur_jenkins",
+                "demo_aim_jenkins",
+                "VMwareBackup"
             )            
-        }
-        foreach ($Repo in $Repos) {
-            [array]$URL =+ "https://github.com/$Account/$Repo.git"
         }
     }
     Process
     {
-        if ($pscmdlet.ShouldProcess("Target", "Operation"))
-        {
+        [array]$existing_dir = Get-ChildItem
+        if ($existing_dir -eq $Null) {
+            foreach ($new_repo in $Repos) {
+                git clone "https://github.com/$Account/$new_repo.git"
+            }
+        }
+        else {
+            $comparison = Compare-Object -ReferenceObject $existing_dir.name -DifferenceObject $Repos -IncludeEqual
+            $existing_repos = $($comparison | Where-Object {($_.SideIndicator -match "==")}).InputObject
+            if ($existing_repos -eq $Null) {
+                Write-Verbose -Message 'No existing repositories' 
+            }
+            else {
+                $total_repos = ($existing_repos | Measure-Object).count
+                $number = 1
+                foreach ($existing_repo in $existing_repos) {
+                    Set-location -Path .\$existing_repo
+                    Write-Host "Working on repository $existing_repo. Number $number of $total_repos" -foregroundcolor Red
+                    git pull --all 
+                    Set-Location ..
+                    $number++
+                }
+            }
         }
     }
     End
