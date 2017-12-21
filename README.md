@@ -6,9 +6,17 @@ This powershell function's main purpose is to keep a local directory updated wit
 * Checks existing directories to make sure they are git repositories
 * Runs git pull --all on any existing repositories
 
+It gathers the repositories by connecting to the github api to fetch a current listing of all repositories.
+
 ## Usage
 The .ps1 file is not self executing.  You will have to add 'GitHub-Clone' to the end of the file if you would like it to execute without any other commands.  otherwise you can run:
 
 * powershell "github-clone.ps1"
 
 The ps1 file can also be added to your user powershell file so that the cmdlet is always available.
+
+## Dependencies
+
+* Powershell 3.0 or greater
+* Git tools
+* Internet Connection
