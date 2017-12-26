@@ -46,10 +46,29 @@ function GitHub-Clone
             }
         } while ($Account -eq $Null)
 
-        #We will pull all of the repos from the account since no specific repo was specified
+        #We will pull all of the repos from the account since no specific repo was specified.  Accounting for pagination in case there are more than 30 repos in the Account.
         if ($User_Repos -eq $Null) {
-            $Repos = Invoke-RestMethod -Method GET -Uri "https://api.github.com/users/$Account/repos"
-            $continue = $true
+            $page = 1
+            do {
+                $Repos_list = Invoke-RestMethod -Method GET -Uri "https://api.github.com/users/$Account/repos?page=$page&per_page=100"
+                $repo_count = ($Repos_list | Measure-Object).Count
+                if ($repo_count -ne 0) {
+                    $Repos += $Repos_list
+                    $page++
+                }
+                else {
+                    Write-Host "Stepped through all available repositories." -ForegroundColor Red -BackgroundColor White
+                }
+            } while ($repo_count -ne 0)
+            $Repos_count = ($Repos | Measure-Object).count
+            if ($Repos_count -gt 0) {
+                $continue = $true
+                Write-Host "Found $Repos_count repositories in account $Account." -ForegroundColor Red -BackgroundColor White
+            }
+            else {
+                $continue = $false
+                Write-Host "Found $Repos_count in account $Account.  Ending program." -ForegroundColor Red -BackgroundColor White
+            }
         }
 
         #Checking to make sure that the specified repo(s) exist in the GitHub account
