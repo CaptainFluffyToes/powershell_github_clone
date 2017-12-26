@@ -7,11 +7,13 @@ This powershell function's main purpose is to keep a local directory updated wit
 * Runs git pull --all on any existing repositories.
 * Verifies than any passed through repository exists before attempting to clone/fetch changes.
 * Will terminate if the entered repository names do not match with any of the online names.
+* Handles accounts with more than 30 repos.
+* Terminates if there are no repos present in the named account.
 
 It gathers the repositories by connecting to the github api to fetch a current listing of all repositories.
 
 ## Usage
-The .ps1 file is self executing.  Drop the file into the directory that you would like to use for your GitHub repositories.  They execute the .ps1 file from a powershell prompt.
+The .ps1 file is self executing.  Drop the file into the directory that you would like to use for your GitHub repositories.  Then execute the .ps1 file from a powershell prompt.
 
 ## Dependencies
 
