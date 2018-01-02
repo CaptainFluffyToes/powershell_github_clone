@@ -130,6 +130,15 @@ function GitHub-Clone
                         #Checking each directory to see if a .git folder exists (hidden or not)
                         if (($(Get-ChildItem -Hidden) -match ".git") -or ($(Get-ChildItem) -match ".git")) {
                             Write-Host "Working on repository $($existing_repo.name). Number $number of $total_repos" -ForegroundColor Red -BackgroundColor White
+
+                            #get list of branches in repo
+                            $local_branches = git branch
+                            $online_branches = Invoke-RestMethod -Method Get -Uri "https://api.github.com/repos/$Account/$existing_repo/branches"
+                            
+                            $status = git status
+                            if ($status -match 'up') {
+                                
+                            }
                             git pull --all 
                             Set-Location ..
                             $number++   
