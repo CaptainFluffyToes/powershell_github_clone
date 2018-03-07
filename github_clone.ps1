@@ -38,6 +38,8 @@ function GitHub-Clone
 
     Begin
     {
+        #Set TLS method to 1.2 from the default 1.0.
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         #Gathering information about the GitHub account that we are going to use for the repo download
         do {
             $Account = Read-Host -Prompt 'Please enter the name of the GitHub Account.'
